@@ -1,27 +1,30 @@
-import sqlite3
+import sqlite3 as sq
 
-# Создание соединения с базой данных
-db = sqlite3.connect('server.db')
-sql = db.cursor() #Курсор нужен для работы с баззой данных - удаление и добавление
+def sql_start():
+    global base, cur
+    base = sq.connect("datab.db")
+    cur = base.cursor()
+    if base:
+        print("Database is OK")
 
-#База
-sql.execute("""CREATE TABLE IF NOT EXISTS users (
-    login TEXT, 
-    password TEXT,
-    cash BIGINT
-)""") #BIGINT - Тип данных означающее число. От 0 до Сикстилионов
+    #База
+    sq.execute("""CREATE TABLE IF NOT EXISTS users (
+        login TEXT, 
+        password TEXT,
+        cash BIGINT
+    )""") #BIGINT - Тип данных означающее число. От 0 до Сикстилионов
 
-db.commit() #Подтверждение действия (Создание таблицы)
+    base.commit() #Подтверждение действия (Создание таблицы)
 
 
-user_login = input("Login: ")
-user_password = input("Password: ")
+    user_login = input("Login: ")
+    user_password = input("Password: ")
 
-sql.execute("SELECT login FROM users") #SELECT - выбрать "login", так же с помощью * можно выбрать все; FROM - в столбце "users"
-if sql.fetchone() is None:
-    sql.execute("INSERT INTO users VALUES (?, ?, ?)", (user_login, user_password, 0))
-    db.commit()
+    sq.execute("SELECT login FROM users") #SELECT - выбрать "login", так же с помощью * можно выбрать все; FROM - в столбце "users"
+    if sq.fetchone() is None:
+        sq.execute("INSERT INTO users VALUES (?, ?, ?)", (user_login, user_password, 0))
+        base.commit()
 
-    print("Зарегистрировано!")
-else:
-    print("Такая запись уже имеется")
+        print("Зарегистрировано!")
+    else:
+        print("Такая запись уже имеется")
