@@ -10,8 +10,11 @@ from telegram import client, admin, other
 # Вызов клиентсокй базы команд
 client.register_handlers_client(dp)
 
+admin.register_handler_admin(dp)
+
 # Вызов остальных команд (всегда ниже остальных)
 other.register_handlers_other(dp)
+
 
 
 # парабетры цикличности бота
