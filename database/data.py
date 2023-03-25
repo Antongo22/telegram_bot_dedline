@@ -28,3 +28,5 @@ def sql_start():
         print("Зарегистрировано!")
     else:
         print("Такая запись уже имеется")
+
+sql_start()
