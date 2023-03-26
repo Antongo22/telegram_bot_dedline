@@ -31,7 +31,9 @@ class FSMAdmin(StatesGroup):
 
 async def cret_ded(message : types.Message):
     await FSMAdmin.ded_name.set()
+
     await message.reply('Какое название будет у дедлайна?')
+
 
 # Выход из записи дедлайна
 async def cancel_handler(message : types.Message, state : FSMContext):
@@ -46,6 +48,7 @@ async def cancel_handler(message : types.Message, state : FSMContext):
 async def load_name(message : types.Message, state : FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД
     async with state.proxy() as data:
+        data['user_id'] = message.chat.id
         data['ded_name'] = message.text
     await FSMAdmin.next()
     await message.reply('Введите описание дедлайна')
