@@ -40,6 +40,7 @@ async def load_name(message : types.Message, state : FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД
     async with state.proxy() as data:
         # Добавление в словарь data айди юзера и имя дедлайна
+        # Проверка на то, что имени таково дедлайна нет
         data['user_id'] = message.chat.id
         data['ded_name'] = message.text
     await FSMAdmin.next()
