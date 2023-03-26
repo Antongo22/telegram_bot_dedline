@@ -12,6 +12,7 @@ class FSMAdmin(StatesGroup):
     ded_name = State()
     ded_description = State()
     ded_date = State()
+    ded_time = State()
     ded_regularity = State()
     ded_warning = State()
 
@@ -66,6 +67,7 @@ async def load_description(message : types.Message, state : FSMContext):
     await message.reply('Введите дату дедлайна формата ЧЧ.ММ.ГГГГ')
 
 
+
 # Получение даты и переход на повторы
 
 async def load_date(message: types.Message, state: FSMContext):
@@ -74,7 +76,19 @@ async def load_date(message: types.Message, state: FSMContext):
         # Добавление в словарь data числа
         data['ded_date'] = message.text
     await FSMAdmin.next()
-    await message.reply('Теперь введите как часто повторять данный дедлайн (одноразовый - введите "один", каждую ниделю - введите "часто")')
+    await message.reply('Введите время дедлайна в формате ЧЧ.ММ')
+
+
+async def load_time(message: types.Message, state: FSMContext):
+    # Тут должна быть запись данных в оперативку, а после корректного завершения в БД, как дату!!!!!!!!
+    async with state.proxy() as data:
+        # Добавление в словарь data времени
+        data['ded_time'] = message.text
+    await FSMAdmin.next()
+    await message.reply(
+        'Теперь введите как часто повторять данный дедлайн (одноразовый - введите "один", каждую ниделю - введите "часто")')
+
+
 
 # Получение регулярности дедлайнов и завершение
 async def load_regularity(message: types.Message, state: FSMContext):
@@ -87,6 +101,7 @@ async def load_regularity(message: types.Message, state: FSMContext):
 Введите в целых часах! """)
 
 
+
 async def load_warning(message: types.Message, state: FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
     async with state.proxy() as data:
@@ -96,12 +111,14 @@ async def load_warning(message: types.Message, state: FSMContext):
     # До этого нужно записать все полученные данные!!! Пока тут временная функция
 
 
+
     # Вывод полученных результатов
     async with state.proxy() as data:
         await message.reply(str(data))
     await message.answer('Дедлайн создан и добавлен!')
 
     await state.finish()
+
 
 
 
@@ -116,6 +133,7 @@ def register_handler_admin(db : Dispatcher):
     db.register_message_handler(load_name, state= FSMAdmin.ded_name)
     db.register_message_handler(load_description, state= FSMAdmin.ded_description)
     db.register_message_handler(load_date, state=FSMAdmin.ded_date )
+    db.register_message_handler(load_time, state=FSMAdmin.ded_time)
     db.register_message_handler(load_regularity, state=FSMAdmin.ded_regularity)
     db.register_message_handler(load_warning, state=FSMAdmin.ded_warning)
 
