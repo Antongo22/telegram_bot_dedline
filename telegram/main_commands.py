@@ -20,9 +20,6 @@ async def site(message: types.message):
     await message.answer("""www.2Develop.site""")
 
 
-# Команда, для создания дедлайна
-# async def create_ded_line(message: types.message):
-#     await message.answer("""Как назовём дедлайн?""")
 
 # Команда по выводу на экран дедлайнов
 async def show_ded_lines(message: types.message):
@@ -40,6 +37,5 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(commands_start, commands=['start'])
     dp.register_message_handler(commands_help, commands=['help'])
     dp.register_message_handler(site, commands=['сайт'])
-    # dp.register_message_handler(create_ded_line, commands=['создать'])
     dp.register_message_handler(show_ded_lines, commands=['показать'])
     dp.register_message_handler(ded_line_settings, commands=['настройки'])

@@ -4,7 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 but_commands_help = KeyboardButton('/help')
 but_site = KeyboardButton('/сайт')
 but_create_ded_line = KeyboardButton('создать')
-but_show_ded_lines = KeyboardButton('/показать')
+but_show_ded_lines = KeyboardButton('показать дедлайны')
 but_ded_line_settings = KeyboardButton('/настройки')
 
 # Объект клавиатуры

@@ -18,16 +18,6 @@ class FSMAdmin(StatesGroup):
 
 
 
-# async def make_changes_command(message : types.Message):
-#     global ID
-#     ID = message.from_user.id
-#     await bot.send_message(message.from_user.id, "Вы админ, что будем делать?")
-#     await message.delete()
-
-# если хотим доступ только у админов, тогода везде, перед выполнением нужно вставить:
-# if message.from_user.id == ID :
-
-
 # Начало выполнения команды
 
 async def cret_ded(message : types.Message):
@@ -126,7 +116,7 @@ async def load_warning(message: types.Message, state: FSMContext):
 
 # Регистрация команд для передачи
 
-def register_handler_admin(db : Dispatcher):
+def register_handler_create_dedline(db : Dispatcher):
     db.register_message_handler(cret_ded, lambda message : 'создать' in message.text, state=None)
     db.register_message_handler(cancel_handler, state="*", commands='отмена')
     db.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
