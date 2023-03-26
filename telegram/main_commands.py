@@ -21,10 +21,6 @@ async def site(message: types.message):
 
 
 
-# Команда по выводу на экран дедлайнов
-async def show_ded_lines(message: types.message):
-    await message.answer("""Вот ваши дедлайны:
-Какой показать?""")
 
 # Комманда для настроекти
 async def ded_line_settings(message: types.message):
@@ -36,6 +32,5 @@ def register_handlers_client(dp: Dispatcher):
     # Бинд команд на кнопки
     dp.register_message_handler(commands_start, commands=['start'])
     dp.register_message_handler(commands_help, commands=['help'])
-    dp.register_message_handler(site, commands=['сайт'])
-    dp.register_message_handler(show_ded_lines, commands=['показать'])
+    dp.register_message_handler(site, lambda message : 'сайт' in message.text)
     dp.register_message_handler(ded_line_settings, commands=['настройки'])
