@@ -34,7 +34,7 @@ async def cancel_handler(message : types.Message, state : FSMContext):
     current_state = await state.get_state()
     if current_state is None:
         return
-    await message.reply('ОК')
+    await message.reply('ОК', reply_markup=kb_client)
     await state.finish()
 
 # Получение имени дедлайна и переход на описание
