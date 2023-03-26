@@ -101,7 +101,7 @@ async def load_warning(message: types.Message, state: FSMContext):
 # Регистрация команд для передачи
 
 def register_handler_admin(db : Dispatcher):
-    db.register_message_handler(cret_ded, commands=['создать'], state=None)
+    db.register_message_handler(cret_ded, lambda message : 'создать' in message.text, state=None)
     db.register_message_handler(cancel_handler, state="*", commands='отмена')
     db.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
     db.register_message_handler(load_name, state= FSMAdmin.ded_name)

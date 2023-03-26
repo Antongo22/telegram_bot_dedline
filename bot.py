@@ -5,12 +5,12 @@ from create_bot import dp
 async def on_startup(_):
     print("Бот начал работать!")
 
-from telegram import client, admin, other
+from telegram import main_commands, create_dedline, other
 
 # Вызов клиентсокй базы команд
-client.register_handlers_client(dp)
+main_commands.register_handlers_client(dp)
 
-admin.register_handler_admin(dp)
+create_dedline.register_handler_admin(dp)
 
 # Вызов остальных команд (всегда ниже остальных)
 other.register_handlers_other(dp)

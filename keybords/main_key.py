@@ -3,7 +3,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 # Создание кнопок
 but_commands_help = KeyboardButton('/help')
 but_site = KeyboardButton('/сайт')
-but_create_ded_line = KeyboardButton('/создать')
+but_create_ded_line = KeyboardButton('создать')
 but_show_ded_lines = KeyboardButton('/показать')
 but_ded_line_settings = KeyboardButton('/настройки')
 
