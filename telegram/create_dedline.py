@@ -48,6 +48,7 @@ async def cancel_handler(message : types.Message, state : FSMContext):
 async def load_name(message : types.Message, state : FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД
     async with state.proxy() as data:
+        # Добавление в словарь data айди юзера и имя дедлайна
         data['user_id'] = message.chat.id
         data['ded_name'] = message.text
     await FSMAdmin.next()
@@ -59,6 +60,7 @@ async def load_name(message : types.Message, state : FSMContext):
 async def load_description(message : types.Message, state : FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!
     async with state.proxy() as data:
+        # Добавление в словарь data описание дедлайна
         data['ded_description'] = message.text
     await FSMAdmin.next()
     await message.reply('Введите дату дедлайна формата ЧЧ.ММ.ГГГГ')
@@ -69,6 +71,7 @@ async def load_description(message : types.Message, state : FSMContext):
 async def load_date(message: types.Message, state: FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД, как дату!!!!!!!!
     async with state.proxy() as data:
+        # Добавление в словарь data числа
         data['ded_date'] = message.text
     await FSMAdmin.next()
     await message.reply('Теперь введите как часто повторять данный дедлайн (одноразовый - введите "один", каждую ниделю - введите "часто")')
@@ -77,6 +80,7 @@ async def load_date(message: types.Message, state: FSMContext):
 async def load_regularity(message: types.Message, state: FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
     async with state.proxy() as data:
+        # Добавление в словарь data регулярности оповещений
         data['ded_regularity'] = message.text
     await FSMAdmin.next()
     await message.reply("""За сколько вас нудно предупредить о дедлайне? 
@@ -86,9 +90,11 @@ async def load_regularity(message: types.Message, state: FSMContext):
 async def load_warning(message: types.Message, state: FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
     async with state.proxy() as data:
+        # Добавление в словарь data часов о предупреждении
         data['ded_warning'] = int(message.text)
 
     # До этого нужно записать все полученные данные!!! Пока тут временная функция
+
 
     # Вывод полученных результатов
     async with state.proxy() as data:
