@@ -4,6 +4,9 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from aiogram.dispatcher.filters import Text
+from aiogram.types import ReplyKeyboardRemove
+from keybords import kb_client
+from keybords import kb_create
 
 # ID = None
 
@@ -23,7 +26,7 @@ class FSMAdmin(StatesGroup):
 async def cret_ded(message : types.Message):
     await FSMAdmin.ded_name.set()
 
-    await message.reply('Какое название будет у дедлайна?')
+    await message.reply('Какое название будет у дедлайна?', reply_markup= kb_create)
 
 
 # Выход из записи дедлайна

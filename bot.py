@@ -1,5 +1,7 @@
 from aiogram.utils import executor
 from create_bot import dp
+from keybords import kb_client
+from aiogram.types import ReplyKeyboardRemove
 
 # Показать, что бот запущен
 async def on_startup(_):
