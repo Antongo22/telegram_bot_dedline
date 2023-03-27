@@ -109,7 +109,7 @@ async def load_warning(message: types.Message, state: FSMContext):
     # Вывод полученных результатов
     async with state.proxy() as data:
         await message.reply(str(data))
-    await message.answer('Дедлайн создан и добавлен!')
+    await message.answer('Дедлайн создан и добавлен!', reply_markup= kb_client)
 
     await state.finish()
 

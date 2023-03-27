@@ -4,6 +4,8 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from aiogram.dispatcher.filters import Text
+from keybords import kb_client
+from keybords import kb_show
 
 # ID = None
 
@@ -20,7 +22,7 @@ async def show_ded(message : types.Message, state : FSMContext):
     async with state.proxy() as data:
         # Добавление и получение в словарь data айди юзера
         data['user_id'] = message.chat.id
-    await message.reply('Вот ваши дедлайны:')
+    await message.reply('Вот ваши дедлайны:', reply_markup= kb_show)
 
     # Вывод из БД имён всех дедлайнов
 
@@ -32,7 +34,7 @@ async def cancel_handler(message : types.Message, state : FSMContext):
     current_state = await state.get_state()
     if current_state is None:
         return
-    await message.reply('ОК')
+    await message.reply('ОК', reply_markup=kb_client)
     await state.finish()
 
 
@@ -55,7 +57,7 @@ async def load_choice(message : types.Message, state : FSMContext):
     # Вывод полученных результатов
     async with state.proxy() as data:
         await message.reply(str(data))
-    await message.answer('Выходим в главную!')
+    await message.answer('Выходим в главную!', reply_markup=kb_client)
 
     await state.finish()
 
