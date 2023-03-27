@@ -20,17 +20,10 @@ async def site(message: types.message):
     await message.answer("""www.2Develop.site""")
 
 
-
-
-# Комманда для настроекти
-async def ded_line_settings(message: types.message):
-    await message.answer("""Что будем настраивать?""")
-
-
 # Передача команд клиента
 def register_handlers_client(dp: Dispatcher):
     # Бинд команд на кнопки
     dp.register_message_handler(commands_start, commands=['start'])
     dp.register_message_handler(commands_help, commands=['help'])
     dp.register_message_handler(site, lambda message : 'сайт' in message.text)
-    dp.register_message_handler(ded_line_settings, commands=['настройки'])
+

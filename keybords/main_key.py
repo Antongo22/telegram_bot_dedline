@@ -5,7 +5,7 @@ but_commands_help = KeyboardButton('/help')
 but_site = KeyboardButton('сайт')
 but_create_ded_line = KeyboardButton('создать')
 but_show_ded_lines = KeyboardButton('показать дедлайны')
-but_ded_line_settings = KeyboardButton('/настройки')
+but_ded_line_settings = KeyboardButton('настройки')
 
 # Объект клавиатуры
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
