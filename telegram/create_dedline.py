@@ -84,8 +84,7 @@ async def load_regularity(message: types.Message, state: FSMContext):
         # Добавление в словарь data регулярности оповещений
         data['ded_regularity'] = message.text
     await FSMCreate.next()
-    await message.reply("""За сколько вас нудно предупредить о дедлайне? 
-Введите в целых часах! """)
+    await message.reply("""Введите время, когда вас предупредить о дедлайне формата ЧЧ.ММ.ГГГГ. В настройках вы сможете добавить ещё одну точку""")
 
 
 # Опрос о времени до предупреждения
@@ -93,7 +92,7 @@ async def load_warning(message: types.Message, state: FSMContext):
     # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
     async with state.proxy() as data:
         # Добавление в словарь data часов о предупреждении
-        data['ded_warning'] = int(message.text)
+        data['ded_warning'] = message.text
 
     # До этого нужно записать все полученные данные!!! Пока тут временная функция
 
@@ -102,8 +101,8 @@ async def load_warning(message: types.Message, state: FSMContext):
     # Вывод полученных результатов
     async with state.proxy() as data:
         await message.reply(str(data))
-    await message.answer('Дедлайн создан и добавлен!', reply_markup= kb_client)
-
+    await message.answer('Дедлайн создан и добавлен!')
+    await message.answer('Выходим в главную!', reply_markup=kb_client)
     await state.finish()
 
 # Регистрация команд для передачи
