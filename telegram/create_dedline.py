@@ -45,18 +45,7 @@ async def load_description(message: types.Message, state: FSMContext):  # Пол
     await FSMCreate.next()
     await message.reply('Введите дату дедлайна формата ЧЧ.ММ.ГГГГ')
 
-
-async def load_date(message: types.Message, state: FSMContext):  # Получение даты дедлайна
-    # Получение конкретной даты и времени
-    current_date = datetime.now()
-    year = current_date.year
-    month = current_date.month
-    day = current_date.day
-    hour = current_date.hour
-    minute = current_date.minute
-    date = f"{year}.{month}.{day}"
-    time = f"{hour}.{minute}"
-
+async def check_data(message, date, day, month, year, state):
     try:  # Проверка на доступность даты
         d_date = message.text.split('.')
         if (int(d_date[0]) >= day and int(d_date[1]) >= month and int(d_date[2]) >= year) or (
@@ -79,17 +68,29 @@ async def load_date(message: types.Message, state: FSMContext):  # Получе�
 
         else:
             await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
-            await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
-                                 reply_markup=kb_client)
+            await check_data(message, date, day, month, year, state)
             await state.finish()
 
     except:
         await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
 
-        await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
-                             reply_markup=kb_client)
+        await check_data(message, date, day, month, year, state)
+
         await state.finish()
 
+
+async def load_date(message: types.Message, state: FSMContext):  # Получение даты дедлайна
+    # Получение конкретной даты и времени
+    current_date = datetime.now()
+    year = current_date.year
+    month = current_date.month
+    day = current_date.day
+    hour = current_date.hour
+    minute = current_date.minute
+    date = f"{year}.{month}.{day}"
+    time = f"{hour}.{minute}"
+
+    await check_data(message, date, day, month, year, state)
 
 async def load_time(message: types.Message, state: FSMContext):  # Получение времени дедлайна
     async with state.proxy() as data:
