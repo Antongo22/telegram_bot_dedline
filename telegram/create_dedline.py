@@ -45,7 +45,7 @@ async def load_description(message: types.Message, state: FSMContext):  # Пол
     await FSMCreate.next()
     await message.reply('Введите дату дедлайна формата ЧЧ.ММ.ГГГГ')
 
-async def check_data(message, date, day, month, year, state):
+def check_data(message, date, day, month, year, state):
     try:  # Проверка на доступность даты
         d_date = message.text.split('.')
         if (int(d_date[0]) >= day and int(d_date[1]) >= month and int(d_date[2]) >= year) or (
@@ -68,13 +68,13 @@ async def check_data(message, date, day, month, year, state):
 
         else:
             await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
-            await check_data(message, date, day, month, year, state)
+            check_data(message, date, day, month, year, state)
             await state.finish()
 
     except:
         await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
 
-        await check_data(message, date, day, month, year, state)
+        check_data(message, date, day, month, year, state)
 
         await state.finish()
 
