@@ -36,9 +36,9 @@ async def load_ok(message: types.Message, state: FSMContext):  # Получен�
 
 async def load_del_d(message: types.Message, state: FSMContext):  # Подтверждение удаления
     async with state.proxy() as data:
-        data['ded_del'] = message.text
+        data['ded_del'] = message.text.lower()
 
-        if data['ded_del'] == 'Да':
+        if data['ded_del'] == 'да':
             await message.answer('Дедлайн удалён!')
             await message.answer('Выходим в главную!', reply_markup=kb_client)
 

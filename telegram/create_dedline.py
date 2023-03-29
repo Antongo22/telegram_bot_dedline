@@ -5,6 +5,7 @@ from create_bot import dp, bot
 from aiogram.dispatcher.filters import Text
 from keybords import kb_client
 from keybords import kb_create
+from datetime import datetime
 
 
 class FSMCreate(StatesGroup):  # Команда для создания дедлайна
@@ -46,10 +47,48 @@ async def load_description(message: types.Message, state: FSMContext):  # Пол
 
 
 async def load_date(message: types.Message, state: FSMContext):  # Получение даты дедлайна
-    async with state.proxy() as data:
-        data['ded_date'] = message.text
-    await FSMCreate.next()
-    await message.reply('Введите время дедлайна в формате ЧЧ.ММ')
+    # Получение конкретной даты и времени
+    current_date = datetime.now()
+    year = current_date.year
+    month = current_date.month
+    day = current_date.day
+    hour = current_date.hour
+    minute = current_date.minute
+    date = f"{year}.{month}.{day}"
+    time = f"{hour}.{minute}"
+
+    try:  # Проверка на доступность даты
+        d_date = message.text.split('.')
+        if (int(d_date[0]) >= day and int(d_date[1]) >= month and int(d_date[2]) >= year) or (
+                int(d_date[1]) >= month and int(d_date[2]) >= year) or (int(d_date[2]) > year):
+
+            try:
+                datetime.strptime(date, '%d.%m.%Y')
+                async with state.proxy() as data:
+                    data['ded_date'] = message.text
+                    print("продолжим")
+                await FSMCreate.next()
+                await message.reply('Введите время дедлайна в формате ЧЧ.ММ')
+
+            except ValueError:
+                await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+                await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                                     reply_markup=kb_client)
+                await state.finish()
+
+
+        else:
+            await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+            await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                                 reply_markup=kb_client)
+            await state.finish()
+
+    except:
+        await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+
+        await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                             reply_markup=kb_client)
+        await state.finish()
 
 
 async def load_time(message: types.Message, state: FSMContext):  # Получение времени дедлайна
@@ -62,7 +101,7 @@ async def load_time(message: types.Message, state: FSMContext):  # Получе�
 
 async def load_regularity(message: types.Message, state: FSMContext):  # Получение регулярности дедлайнов и завершение
     async with state.proxy() as data:
-        data['ded_regularity'] = message.text
+        data['ded_regularity'] = message.text.lower()
     await FSMCreate.next()
     await message.reply(
         """Введите дату, когда вас предупредить о дедлайне формата ЧЧ.ММ.ГГГГ. В настройках вы сможете добавить ещё одну точку""")
@@ -99,5 +138,3 @@ def register_handler_create_dedline(db: Dispatcher):  # Регистрация �
     db.register_message_handler(load_regularity, state=FSMCreate.ded_regularity)
     db.register_message_handler(load_warning_date, state=FSMCreate.ded_warning_date)
     db.register_message_handler(load_regularity_time, state=FSMCreate.ded_warning_time)
-
-    # db.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin = True)
