@@ -3,7 +3,6 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 # Создание кнопок
 but_cancellation = KeyboardButton('отмена')
 
-
 # Объект клавиатуры
 kb_show = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 

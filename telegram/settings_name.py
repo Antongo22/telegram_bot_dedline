@@ -6,17 +6,13 @@ from aiogram.dispatcher.filters import Text
 from keybords import kb_client, kb_show
 
 
-# ID = None
-
-# Команда для настроек
-class FSMSetName(StatesGroup):
+class FSMSetName(StatesGroup):  # Команда для настроек - новое имя и описание
     ded_name = State()
     ded_new_name = State()
     ded_new_new_description = State()
 
 
-# Начало выполнения команды
-async def start_data_time(message : types.Message, state : FSMContext):
+async def start_data_time(message: types.Message, state: FSMContext):  # Начало выполнения команды
     await FSMSetName.ded_name.set()
     async with state.proxy() as data:
         # Добавление и получение в словарь data айди юзера
@@ -24,9 +20,7 @@ async def start_data_time(message : types.Message, state : FSMContext):
     await message.reply('Введите номер дедлайна, который вы хотите настроить', reply_markup=kb_show)
 
 
-
-# Выход из показа дедлайна
-async def cancel_handler(message : types.Message, state : FSMContext):
+async def cancel_handler(message: types.Message, state: FSMContext):  # Выход из показа дедлайна
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -34,21 +28,21 @@ async def cancel_handler(message : types.Message, state : FSMContext):
     await state.finish()
 
 
-async def load_name(message : types.Message, state : FSMContext):
+async def load_name(message: types.Message, state: FSMContext):  # Получение имени дедлайна для настроек
     async with state.proxy() as data:
         data['ded_name'] = message.text
     await FSMSetName.next()
     await message.reply('Введите новое имя дедлайна!')
 
-#Считываем настройки
-async def new_name(message : types.Message, state : FSMContext):
+
+async def new_name(message: types.Message, state: FSMContext):  # Получение нового имени дедлайна
     async with state.proxy() as data:
         data['ded_new_name'] = message.text
     await FSMSetName.next()
     await message.reply('Введите новое описание дедлайна')
 
 
-async def new_description(message: types.Message, state: FSMContext):
+async def new_description(message: types.Message, state: FSMContext):  # Получение нового описания дедлайна
     async with state.proxy() as data:
         data['ded_new_new_description'] = message.text
         await message.reply(str(data))
@@ -58,15 +52,10 @@ async def new_description(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-
-# Регистрация команд для передачи
-
-def register_handler_settings_neme(db : Dispatcher):
-    db.register_message_handler(start_data_time, lambda message : 'настроить имя/описание' in message.text, state=None)
+def register_handler_settings_neme(db: Dispatcher):  # Регистрация команд для передачи
+    db.register_message_handler(start_data_time, lambda message: 'настроить имя/описание' in message.text, state=None)
     db.register_message_handler(cancel_handler, state="*", commands='отмена')
     db.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
     db.register_message_handler(load_name, state=FSMSetName.ded_name)
     db.register_message_handler(new_name, state=FSMSetName.ded_new_name)
     db.register_message_handler(new_description, state=FSMSetName.ded_new_new_description)
-
-

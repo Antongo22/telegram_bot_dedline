@@ -1,16 +1,16 @@
 from aiogram.utils import executor
 from create_bot import dp
-from keybords import kb_client
-from aiogram.types import ReplyKeyboardRemove
 
-# Показать, что бот запущен
-async def on_startup(_):
+
+async def on_startup(_):  # Показать, что бот запущен
     print("Бот начал работать!")
 
-from telegram import main_commands, create_dedline, show_dedline, other, settings_time, settings_name, settings_reminder,\
+
+from telegram import main_commands, create_dedline, show_dedline, other, settings_time, settings_name, \
+    settings_reminder, \
     settings_reminder_del, settings_del
 
-# Вызов клиентсокй базы команд
+# Вызов базы команд
 main_commands.register_handlers_client(dp)
 
 create_dedline.register_handler_create_dedline(dp)
@@ -27,11 +27,6 @@ settings_reminder_del.register_handler_settings_reminder_del(dp)
 
 settings_del.register_handler_settings_del(dp)
 
-# Вызов остальных команд (всегда ниже остальных)
-other.register_handlers_other(dp)
+other.register_handlers_other(dp)  # Вызов остальных команд (всегда ниже остальных)
 
-
-
-
-# парабетры цикличности бота
-executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+executor.start_polling(dp, skip_updates=True, on_startup=on_startup)  # параметры цикличности бота

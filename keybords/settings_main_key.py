@@ -12,4 +12,5 @@ but_del = KeyboardButton('удалить дедлайн')
 kb_settings_main = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 
 # Добавление на клавиатуру кнопок. insert делает так, чтобыв заполнялось по размерам надписей, тоесть красиво
-kb_settings_main.insert(but_change).insert(but_name).insert(but_reminder).insert(but_reminder_del).insert(but_del).insert(but_cancellation)
+kb_settings_main.insert(but_change).insert(but_name).insert(but_reminder).insert(but_reminder_del).insert(
+    but_del).insert(but_cancellation)

@@ -2,9 +2,7 @@ from aiogram import types, Dispatcher
 from create_bot import dp
 
 
-# Тест по говнокоду)
-# @dp.message_handler()
-async def ask_govnokod(message : types.Message):
+async def ask_govnokod(message: types.Message):  # Посхалка от разраба + обработка неправильного ответа от пользователя
     if message.text == "Кто пишет говнокод?":
         await message.answer("Кто спрашивает тот и пишет")
         await message.answer("И вообще, выключи компьютер!")
@@ -13,7 +11,5 @@ async def ask_govnokod(message : types.Message):
         await message.answer("Я тебя не понимаю!")
 
 
-# Передача остальных команд
-def register_handlers_other(dp : Dispatcher):
-
+def register_handlers_other(dp: Dispatcher):  # Передача остальных команд
     dp.register_message_handler(ask_govnokod)

@@ -11,4 +11,5 @@ but_ded_line_settings = KeyboardButton('настройки')
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 
 # Добавление на клавиатуру кнопок. insert делает так, чтобыв ззаполнялось по размерам надписей, тоесть красиво
-kb_client.insert(but_commands_help).insert(but_site).insert(but_create_ded_line).insert(but_show_ded_lines).insert(but_ded_line_settings)
+kb_client.insert(but_commands_help).insert(but_site).insert(but_create_ded_line).insert(but_show_ded_lines).insert(
+    but_ded_line_settings)
