@@ -63,7 +63,7 @@ async def load_date(message: types.Message, state: FSMContext):  # Получе�
                 int(d_date[1]) >= month and int(d_date[2]) >= year) or (int(d_date[2]) > year):
 
             try:
-                datetime.strptime(date, '%d.%m.%Y')
+                datetime.strptime(message.text, '%d.%m.%Y')
                 async with state.proxy() as data:
                     data['ded_date'] = message.text
                     print("продолжим")
