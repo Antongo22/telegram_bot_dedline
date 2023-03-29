@@ -7,7 +7,8 @@ from aiogram.types import ReplyKeyboardRemove
 async def on_startup(_):
     print("Бот начал работать!")
 
-from telegram import main_commands, create_dedline, show_dedline, other, settings_time, settings_name
+from telegram import main_commands, create_dedline, show_dedline, other, settings_time, settings_name, settings_reminder,\
+    settings_reminder_del, settings_del
 
 # Вызов клиентсокй базы команд
 main_commands.register_handlers_client(dp)
@@ -19,6 +20,12 @@ show_dedline.register_handler_show_dedline(dp)
 settings_time.register_handler_settings_time(dp)
 
 settings_name.register_handler_settings_neme(dp)
+
+settings_reminder.register_handler_settings_reminder(dp)
+
+settings_reminder_del.register_handler_settings_reminder_del(dp)
+
+settings_del.register_handler_settings_del(dp)
 
 # Вызов остальных команд (всегда ниже остальных)
 other.register_handlers_other(dp)

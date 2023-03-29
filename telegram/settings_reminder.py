@@ -9,15 +9,15 @@ from keybords import kb_client, kb_show
 # ID = None
 
 # Команда для настроек
-class FSMSetName(StatesGroup):
+class FSMReminder(StatesGroup):
     ded_name = State()
-    ded_new_name = State()
-    ded_new_new_description = State()
+    ded_date = State()
+    ded_time = State()
 
 
 # Начало выполнения команды
 async def start_data_time(message : types.Message, state : FSMContext):
-    await FSMSetName.ded_name.set()
+    await FSMReminder.ded_name.set()
     async with state.proxy() as data:
         # Добавление и получение в словарь data айди юзера
         data['user_id'] = message.chat.id
@@ -37,22 +37,22 @@ async def cancel_handler(message : types.Message, state : FSMContext):
 async def load_name(message : types.Message, state : FSMContext):
     async with state.proxy() as data:
         data['ded_name'] = message.text
-    await FSMSetName.next()
-    await message.reply('Введите новое имя дедлайна!')
+    await FSMReminder.next()
+    await message.reply('Введите новую дату оповещения в формате ЧЧ.ММ.ГГГГ')
 
 #Считываем настройки
-async def new_name(message : types.Message, state : FSMContext):
+async def load_date(message : types.Message, state : FSMContext):
     async with state.proxy() as data:
-        data['ded_new_name'] = message.text
-    await FSMSetName.next()
-    await message.reply('Введите новое описание дедлайна')
+        data['ded_date'] = message.text
+    await FSMReminder.next()
+    await message.reply('Введите новое время оповещения в формате ЧЧ.ММ')
 
 
-async def new_description(message: types.Message, state: FSMContext):
+async def load_time(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        data['ded_new_new_description'] = message.text
+        data['ded_time'] = message.text
         await message.reply(str(data))
-    await message.answer('Дедлайн переименован!')
+    await message.answer('Время оповещения добавлено!')
     await message.answer('Выходим в главную!', reply_markup=kb_client)
 
     await state.finish()
@@ -61,12 +61,12 @@ async def new_description(message: types.Message, state: FSMContext):
 
 # Регистрация команд для передачи
 
-def register_handler_settings_neme(db : Dispatcher):
-    db.register_message_handler(start_data_time, lambda message : 'настроить имя/описание' in message.text, state=None)
+def register_handler_settings_reminder(db : Dispatcher):
+    db.register_message_handler(start_data_time, lambda message : 'добавить точку оповещения' in message.text, state=None)
     db.register_message_handler(cancel_handler, state="*", commands='отмена')
     db.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*")
-    db.register_message_handler(load_name, state=FSMSetName.ded_name)
-    db.register_message_handler(new_name, state=FSMSetName.ded_new_name)
-    db.register_message_handler(new_description, state=FSMSetName.ded_new_new_description)
+    db.register_message_handler(load_name, state=FSMReminder.ded_name)
+    db.register_message_handler(load_date, state=FSMReminder.ded_date)
+    db.register_message_handler(load_time, state=FSMReminder.ded_time)
 
 

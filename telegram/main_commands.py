@@ -31,7 +31,7 @@ def register_handlers_client(dp: Dispatcher):
     # Бинд команд на кнопки
     dp.register_message_handler(commands_start, commands=['start'])
     dp.register_message_handler(commands_help, commands=['help'])
-    dp.register_message_handler(site, lambda message : 'сайт' in message.text)
+    dp.register_message_handler(site, lambda message : 'сайт разработчиков' in message.text)
     dp.register_message_handler(settings, lambda message: 'настройки' in message.text)
     dp.register_message_handler(cancellation, lambda message: 'отмена' in message.text)
 

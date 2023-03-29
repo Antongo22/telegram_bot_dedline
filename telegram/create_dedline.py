@@ -16,7 +16,8 @@ class FSMCreate(StatesGroup):
     ded_date = State()
     ded_time = State()
     ded_regularity = State()
-    ded_warning = State()
+    ded_warning_date = State()
+    ded_warning_time = State()
 
 # Начало выполнения команды
 async def cret_ded(message : types.Message):
@@ -84,18 +85,30 @@ async def load_regularity(message: types.Message, state: FSMContext):
         # Добавление в словарь data регулярности оповещений
         data['ded_regularity'] = message.text
     await FSMCreate.next()
-    await message.reply("""Введите время, когда вас предупредить о дедлайне формата ЧЧ.ММ.ГГГГ. В настройках вы сможете добавить ещё одну точку""")
+    await message.reply("""Введите дату, когда вас предупредить о дедлайне формата ЧЧ.ММ.ГГГГ. В настройках вы сможете добавить ещё одну точку""")
+
+
+async def load_regularity(message: types.Message, state: FSMContext):
+    # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
+    async with state.proxy() as data:
+        # Добавление в словарь data регулярности оповещений
+        data['ded_regularity'] = message.text
+    await FSMCreate.next()
+    await message.reply("""Введите дату, когда вас предупредить о дедлайне формата ЧЧ.ММ.ГГГГ. В настройках вы сможете добавить ещё одну точку""")
 
 
 # Опрос о времени до предупреждения
-async def load_warning(message: types.Message, state: FSMContext):
-    # Тут должна быть запись данных в оперативку, а после корректного завершения в БД!!!!!!!!
+async def load_warning_date(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        # Добавление в словарь data часов о предупреждении
-        data['ded_warning'] = message.text
+        data['ded_warning_date'] = message.text
+        await FSMCreate.next()
+        await message.reply(
+            """Введите время, когда вас предупредить о дедлайне формата ЧЧ.ММ. В настройках вы сможете добавить ещё одну точку""")
 
     # До этого нужно записать все полученные данные!!! Пока тут временная функция
-
+async def load_regularity_time(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['ded_warning_time'] = message.text
 
 
     # Вывод полученных результатов
@@ -116,6 +129,7 @@ def register_handler_create_dedline(db : Dispatcher):
     db.register_message_handler(load_date, state=FSMCreate.ded_date )
     db.register_message_handler(load_time, state=FSMCreate.ded_time)
     db.register_message_handler(load_regularity, state=FSMCreate.ded_regularity)
-    db.register_message_handler(load_warning, state=FSMCreate.ded_warning)
+    db.register_message_handler(load_warning_date, state=FSMCreate.ded_warning_date)
+    db.register_message_handler(load_regularity_time, state = FSMCreate.ded_warning_time)
 
     # db.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin = True)
