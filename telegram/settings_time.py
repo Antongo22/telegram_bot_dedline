@@ -4,6 +4,7 @@ from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from aiogram.dispatcher.filters import Text
 from keybords import kb_client, kb_show
+from datetime import datetime
 
 
 class FSMSetData(StatesGroup):  # Команда для настроек - изминение финала дедлайна
@@ -35,20 +36,97 @@ async def load_name(message: types.Message, state: FSMContext):  # Получе�
 
 
 async def load_date(message: types.Message, state: FSMContext):  # Получаем новою дату
-    async with state.proxy() as data:
-        data['ded_date'] = message.text
-    await FSMSetData.next()
-    await message.reply('Введите новое время в формате ЧЧ.ММ')
+
+    # Получение конкретной даты и времени
+    current_date = datetime.now()
+    year = current_date.year
+    month = current_date.month
+    day = current_date.day
+    hour = current_date.hour
+    minute = current_date.minute
+    date = f"{year}.{month}.{day}"
+    time = f"{hour}.{minute}"
+
+    try:  # Проверка на доступность даты
+        d_date = message.text.split('.')
+        if (int(d_date[0]) >= day and int(d_date[1]) >= month and int(d_date[2]) >= year) or (
+                int(d_date[1]) > month and int(d_date[2]) >= year) or (int(d_date[2]) > year):
+
+            try:
+                datetime.strptime(message.text, '%d.%m.%Y')
+                async with state.proxy() as data:
+                    data['ded_date'] = message.text
+                await FSMSetData.next()
+                await message.reply('Введите новое время в формате ЧЧ.ММ')
+
+            except ValueError:
+                await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+                await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                                     reply_markup=kb_client)
+                await state.finish()
+
+
+        else:
+            await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+            await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                                 reply_markup=kb_client)
+            await state.finish()
+
+    except:
+        await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+
+        await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                             reply_markup=kb_client)
+        await state.finish()
 
 
 async def load_time(message: types.Message, state: FSMContext):  # Получаем новое время
-    async with state.proxy() as data:
-        data['ded_time'] = message.text
-        await message.reply(str(data))
-    await message.answer('Данные обновлены!')
-    await message.answer('Выходим в главную!', reply_markup=kb_client)
+    from datetime import datetime
 
-    await state.finish()
+    # Получение конкретной даты и времени
+    current_date = datetime.now()
+    year = current_date.year
+    month = current_date.month
+    day = current_date.day
+    hour = current_date.hour
+    minute = current_date.minute
+    date = f"{year}.{month}.{day}"
+    time = f"{hour}.{minute}"
+
+    try:  # Проверка на доступность даты
+        d_time = message.text.split('.')
+        try:
+            import datetime
+            time_obj = datetime.datetime.strptime(message.text, '%H.%M').time()
+            assert time_obj.hour < 24 and time_obj.minute < 60
+
+            async with state.proxy() as data:
+                data['ded_time'] = message.text
+                await message.reply(str(data))
+            await message.answer('Данные обновлены!')
+            await message.answer('Выходим в главную!', reply_markup=kb_client)
+
+            await state.finish()
+
+        except (ValueError, AssertionError):
+
+            await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+            await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                                 reply_markup=kb_client)
+            await state.finish()
+
+    except:
+        await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
+
+        await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
+                             reply_markup=kb_client)
+        await state.finish()
+
+
+
+
+
+
 
 
 def register_handler_settings_time(db: Dispatcher):  # Регистрация команд для передачи
