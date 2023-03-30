@@ -1,9 +1,12 @@
 from aiogram.utils import executor
 from create_bot import dp
+from database.func import check_deadlines
+
 
 
 async def on_startup(_):  # Показать, что бот запущен
     print("Бот начал работать!")
+
 
 
 from telegram import main_commands, create_dedline, show_dedline, other, settings_time, settings_name, \

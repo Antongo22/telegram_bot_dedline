@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from database.database import cursor, conn
-
+from aiogram import types
 import asyncio
 
 loop = asyncio.get_event_loop()
@@ -12,23 +12,22 @@ async def add_deadline(data):
     user_id = data['user_id']
     title = data['ded_name']
     description = data['ded_description']
-    date = data['ded_date']
+    date = data['ded_date'].replace('.', '-')
     time = data['ded_time']
-    reminder = data['ded_warning']
+    war_date = data['ded_warning_date'].replace('.', '-')
+    war_time = data['ded_warning_time']
 
-    # проверяем, что дата и время указаны в правильном формате
-    try:
-        datetime.strptime(date, '%d-%m-%Y')
-        datetime.strptime(time, '%H:%M')
-    except ValueError:
-        return
+    print('saa')
 
     # добавляем дедлайн в базу данных
     cursor.execute("""
-    INSERT INTO deadlines (user_id, title, description, date, time, reminder)
-    VALUES (?, ?, ?, ?, ?, ?)
-    """, (user_id, title, description, date, time, reminder))
+    INSERT INTO deadlines (user_id, title, description, date, time, ded_warning_date, ded_warning_time)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, title, description, date, time, war_date, war_time))
     conn.commit()
+
+    # отправка сообщения
+    await check_deadlines(...)
 
 # функция для получения списка всех дедлайнов
 async def list_deadlines(data):
@@ -45,57 +44,74 @@ async def list_deadlines(data):
     # формируем текст сообщения со списком дедлайнов
     text = '<b>Ваши дедлайны:</b>\n\n'
     for deadline in deadlines:
-        _, user_id, title, description, date, time, reminder = deadline
-        text += f'{title}\n{description}\nДата: {date}\nВремя: {time}\nЗа сколько предупредить: {reminder} мин.\n\n'
+        _, user_id, title, description, date, time, war_date, war_time = deadline
+        text += f'{title}\n{description}\nДата: {date}\nВремя: {time}\nКогда предупредить: {war_date} {war_time} \n\n'
 
     # отправка сообщения
+    await check_deadlines(...)
 
 # функция для отправки напоминания о дедлайнах
-async def check_deadlines():
+async def check_deadlines(message : types.Message):
+    from telegram.create_dedline import ded_send_ded, ded_send_warning
+
     # получаем текущую дату и время
     now = datetime.now()
+
+    print("aaa")
 
     # получаем все дедлайны, у которых дата и время больше или равны текущим
     cursor.execute("""
     SELECT * FROM deadlines
     WHERE date >= ? AND time >= ?
-    """, (now.strftime('%Y-%m-%d'), now.strftime('%H:%M')))
+    """, (now.strftime('%d-%m-%Y'), now.strftime('%H.%M')))
     deadlines = cursor.fetchall()
+
+    print(deadlines)
 
     # отправляем напоминания о дедлайнах
     for deadline in deadlines:
-        _, user_id, title, description, dates, time, reminder = deadline
+        _, user_id, title, description, dates, time, war_date, war_time = deadline
+
+        print(dates.split(';'))
 
         for date in dates.split(';'):
-            deadline_datetime = datetime.strptime(f'{date} {time}', '%Y-%m-%d %H:%M')
-            delta = deadline_datetime - now
-            if (delta <= timedelta(minutes=reminder) and delta >= timedelta(minutes=reminder-1)):
+            print("2")
+            deadline_datetime_1 = datetime.strptime(f'{date} {time}', '%d-%m-%Y %H.%M')
+            print("3")
+            deadline_datetime_2 = datetime.strptime(f'{war_date} {war_time}', '%d-%m-%Y %H.%M')
+            print("4")
+            delta_1 = deadline_datetime_1 - datetime.now()
+            print("5")
+            delta_2 = deadline_datetime_2 - datetime.now()
+
+            print(delta_1.total_seconds())
+            print(delta_2.total_seconds())
+            
+            if (delta_1.total_seconds() <= 10 and delta_1.total_seconds() >= -10):
                 # получаем пользователей, которым нужно отправить напоминание
                 cursor.execute("""
                 SELECT user_id FROM deadlines
                 WHERE id = ?
                 """, (deadline[0],))
+                print("delta_1")
 
                 # отправка оповещения
-                # await bot.send_message(user_id, f'<b>{title}</b>\n<b>{description}</b>\nОкончание делайна через: {round(delta.total_seconds() / 60)} мин.\n', parse_mode=ParseMode.HTML)
-            elif (-10 <= delta.total_seconds() and 10 >= delta.total_seconds()):
+                await ded_send_ded(_, title, description, war_date, war_time, user_id)
+            elif (delta_2.total_seconds() <= 10 and delta_2.total_seconds() >= -10):
                 # получаем пользователей, которым нужно отправить напоминание
                 cursor.execute("""
-                            SELECT user_id FROM deadlines
-                            WHERE id = ?
-                            """, (deadline[0],))
+                SELECT user_id FROM deadlines
+                WHERE id = ?
+                """, (deadline[0],))
+                print("delta_2")
 
-            # отправка оповещения
-            # await bot.send_message(user_id, f'<b>{"Дедлайн"}</b>\n<b>{title}</b>\n<b>{description}</b>\n!Дедлайн!\n', parse_mode=ParseMode.HTML)
+                # отправка оповещения
+                await ded_send_warning(_, title, description, war_date, war_time, user_id)
 
+    print("ожидание")
     # ждём 1 минуту и запускаем функцию снова
-    await asyncio.sleep(30)
-    while True:
-        now = datetime.now()
-        if now.second == 0:
-            break
-        await asyncio.sleep(1)
-    loop.create_task(check_deadlines())
+    await asyncio.sleep(60 - datetime.now().second)
+    await check_deadlines(...)
 
 
 def update_time(data):
@@ -162,3 +178,4 @@ def add_new_time(data):
 # @dp.message_handler(commands=['list'])
 # async def list(message: types.Message):
 #     await list_deadlines(message)
+

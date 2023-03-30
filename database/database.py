@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('deadlines.db', check_same_thread=False)
+conn = sqlite3.connect('database/deadlines.db', check_same_thread=False)
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -11,7 +11,8 @@ title TEXT NOT NULL,
 description TEXT,
 date TEXT NOT NULL,
 time TEXT NOT NULL,
-reminder INTEGER NOT NULL
+ded_warning_date TEXT NOT NULL,
+ded_warning_time TEXT NOT NULL
 )
 """)
 

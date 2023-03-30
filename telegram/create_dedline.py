@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 from keybords import kb_client, kb_reg
 from keybords import kb_create
 from datetime import datetime
-
+from database.func import add_deadline
 
 
 class FSMCreate(StatesGroup):  # Команда для создания дедлайна
@@ -17,7 +17,6 @@ class FSMCreate(StatesGroup):  # Команда для создания дедл
     ded_regularity = State()
     ded_warning_date = State()
     ded_warning_time = State()
-
 
 async def cret_ded(message: types.Message):  # Начало выполнения команды
     await FSMCreate.ded_name.set()
@@ -223,7 +222,7 @@ async def load_regularity_time(message: types.Message, state: FSMContext):  # П
             await message.answer('Дедлайн создан и добавлен!')
             await message.answer('Выходим в главную!', reply_markup=kb_client)
             await state.finish()
-
+            await add_deadline(data)
         except (ValueError, AssertionError):
 
             await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
@@ -232,13 +231,16 @@ async def load_regularity_time(message: types.Message, state: FSMContext):  # П
             await state.finish()
 
     except:
-        await message.reply('Вы ввели неправильный формат даты или эта дата недоступна!')
-
-        await message.answer("Превышено допустимое количество попыток! Попробуйте создать дедлайн ещё раз!",
-                             reply_markup=kb_client)
-        await state.finish()
+        pass
 
 
+async def ded_send_warning(message: types.Message, title, description, war_date, war_time, user_id):
+    print(f'{title}\n{description}\nОкончание делайна {war_date} {war_time}\n')
+    await bot.send_message(chat_id=user_id, text=f'{title}\n{description}\nОкончание делайна {war_date} {war_time}\n')
+
+async def ded_send_ded(message: types.Message, title, description, war_date, war_time, user_id):
+    print(f'{title}\n{description}\nОкончание делайна {war_date} {war_time}\n')
+    await bot.send_message(chat_id=user_id, text=f'{title}\n{description}\n!Дедлайн!\n')
 
 
 def register_handler_create_dedline(db: Dispatcher):  # Регистрация команд для передачи
