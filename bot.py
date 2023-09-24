@@ -1,6 +1,5 @@
 from aiogram.utils import executor
 from create_bot import dp
-from database.func import check_deadlines
 
 
 async def on_startup(_):  # Показать, что бот запущен
